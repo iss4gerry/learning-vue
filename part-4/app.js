@@ -34,7 +34,6 @@ var app = new Vue({
         cartTotal: function () {
             let sum = 0
             for(key in this.cart){
-                console.log(key)
                 sum = sum + (this.cart[key].product.price * this.cart[key].qty)
             }
             return sum
@@ -78,6 +77,13 @@ var app = new Vue({
                 this.cart[productIndex].qty++
             }else{
                 this.cart.push({product: product, qty: 1})
+            }
+        },
+        deleteItem: function (key) {
+            if(this.cart[key].qty > 1){
+                this.cart[key].qty--
+            }else{
+                this.cart.splice(key, 1)
             }
         }
     }
