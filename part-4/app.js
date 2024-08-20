@@ -2,13 +2,20 @@ var app = new Vue({
     el: '#app',
     data: {
         style: {
-            label: ['font-weight-bold', 'mr-2'],
-            inputWidth: 60,
-            sliderStatus: false,
+            label: ['font-weight-bold', 'mr-2']
         },
         maximum: 50,
         products: null,
-        cart: []
+        cart: [],
+        style: {
+            label: ['font-weight-bold', 'mr-2'],
+            inputWidth: 60,
+            sliderStatus: true,
+            control: {
+                'width': '60px', 
+                'text-align': 'center'
+            }
+        }
     },
     mounted: function() {
         fetch('https://hplussport.com/api/products/order/price')
@@ -16,15 +23,28 @@ var app = new Vue({
             .then(data => {
                 this.products = data;
             });
-    },
-    filters: {
+    },filters: {
         currencyFormat: function (value) {
-            return 'Rp' + Number.parseFloat(value).toFixed(2);
+            return 'Rp' + Number.parseFloat(value).toFixed(2)
         }
-    },
-    computed: {
-        sliderState: function() {
-            return this.style.sliderStatus ? 'd-flex' : 'd-none';
+    },computed: {
+        sliderState: function(){
+            return this.style.sliderStatus ? 'd-flex' : 'd-none'
+        },
+        cartTotal: function () {
+            let sum = 0
+            for(key in this.cart){
+                console.log(key)
+                sum = sum + (this.cart[key].product.price * this.cart[key].qty)
+            }
+            return sum
+        },cartQty: function () {
+            let qty = 0
+            for(key in this.cart){
+                console.log(key)
+                qty = qty + this.cart[key].qty
+            }
+            return qty
         }
     },
     methods: {
@@ -32,32 +52,32 @@ var app = new Vue({
             el.className = 'd-none'
         },
         enter: function (el) {
-            var delay = el.dataset.index * 100;
-            setTimeout(function() {
+            var delay = el.dataset.index * 100
+            setTimeout(function () {
                 el.className = 'row d-flex mb-3 align-items-center animated fadeInRight'
             }, delay)
         },
         leave: function (el) {
-            var delay = el.dataset.index * 100;
-            setTimeout(function() {
+            var delay = el.dataset.index * 100
+            setTimeout(function () {
                 el.className = 'row d-flex mb-3 align-items-center animated fadeOutRight'
             }, delay)
         },
         addItem: function(product) {
-            var productIndex;
-            var productExist = this.cart.filter(function(item, index) {
-                if (item.product.id == Number(product.id)) {
-                    productIndex = index;
-                    return true;
-                } else {
-                    return false;
+            var productIndex
+            var productExist = this.cart.filter(function (item, index) {
+                if(item.product.id == Number(product.id)){
+                    productIndex = index
+                    return true
+                }else{
+                    return false 
                 }
-            });
+            })
 
-            if (productExist.length) {
+            if(productExist.length){
                 this.cart[productIndex].qty++
-            } else {
-                this.cart.push({product: product, qty: 1});
+            }else{
+                this.cart.push({product: product, qty: 1})
             }
         }
     }
